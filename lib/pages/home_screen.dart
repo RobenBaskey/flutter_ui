@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_ui/model/image_model.dart';
 import 'package:flutter_ui/model/pet_model.dart';
+import 'package:flutter_ui/pages/details_screen.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -22,13 +24,15 @@ class _HomeScreenState extends State<HomeScreen> {
     PetModel(Icons.pedal_bike, "Cats"),
   ];
 
-  List<ImageModel> image_data =[
+  List<ImageModel> image_data = [
     ImageModel("Cat", "This is Cat", "\$100"),
     ImageModel("Dog", "This is Dog", "\$150"),
     ImageModel("Cat", "This is Cat", "\$100"),
   ];
   @override
   Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
+
     return AnimatedContainer(
       transform: Matrix4.translationValues(xOffset, yOffset, 0)
         ..scale(scaleFactor),
@@ -39,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           children: <Widget>[
             SizedBox(
-              height: 50,
+              height: 10,
             ),
             Container(
               margin: EdgeInsets.symmetric(horizontal: 10),
@@ -61,8 +65,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           icon: Icon(Icons.menu),
                           onPressed: () {
                             setState(() {
-                              xOffset = 250;
-                              yOffset = 130;
+                              xOffset = size.width - 100;
+                              yOffset = size.height / 5;
                               scaleFactor = 0.6;
                               isDraweOpend = true;
                             });
@@ -79,7 +83,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ],
                   ),
-                  CircleAvatar()
+                  CircleAvatar(
+                    backgroundImage: AssetImage('asset/images/dfdf.jpg'),
+                  )
                 ],
               ),
             ),
@@ -116,18 +122,21 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                            Container(
-                              child: IconButton(
-                                icon: Icon(pet.icon),
-                                onPressed: () {
-                                  print(pet.name);
-                                },
+                            GestureDetector(
+                              onTap: () {
+                                Fluttertoast.showToast(msg: pet.name);
+                              },
+                              child: Container(
+                                child: IconButton(
+                                  icon: Icon(pet.icon),
+                                  onPressed: () {},
+                                ),
+                                height: 60,
+                                width: 60,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Colors.white),
                               ),
-                              height: 40,
-                              width: 40,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: Colors.white),
                             ),
                             SizedBox(
                               height: 10,
@@ -142,31 +151,90 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             SizedBox(
-              height: 20,
+              height: 10,
             ),
             SingleChildScrollView(
               scrollDirection: Axis.vertical,
               child: Column(
-                  children: image_data.map((image) {
-                      return Row(
-                        children: <Widget>[
-                          Expanded(
-                              child: Stack(
-                            children: <Widget>[
-                              Container(
-                                height: 170,
-                                margin: EdgeInsets.only(top: 20,left: 20),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: Colors.blue[100]
+                  children: image_data.map((imaged) {
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        new MaterialPageRoute(
+                            builder: (context) =>
+                                DetailsScreen(
+                                  image: 'asset/images/catt.png',
+                                  title_t : imaged.name,
+                                  sub_title: imaged.description,
+                                  price: imaged.price
+                                )
+                        ));
+                  },
+                  child: Center(
+                    child: Row(
+                      children: <Widget>[
+                        Expanded(
+                            child: Stack(
+                          children: <Widget>[
+                            Container(
+                              height: 170,
+                              margin: EdgeInsets.only(top: 20, left: 20),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: Colors.blue[100]),
+                              child: Hero(
+                                tag: "details_image",
+                                  child: Image.asset(
+                                'asset/images/catt.png',
+                                width: double.infinity,
+                              )),
+                            ),
+                          ],
+                        )),
+                        Expanded(
+                            child: Stack(
+                          children: <Widget>[
+                            Container(
+                              height: 150,
+                              margin: EdgeInsets.only(
+                                  top: 40, bottom: 15, right: 10),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.only(
+                                      topRight: Radius.circular(10),
+                                      bottomRight: Radius.circular(10)),
+                                  color: Colors.grey[50]),
+                              child: Center(
+                                child: Column(
+                                  children: <Widget>[
+                                    SizedBox(
+                                      height: 20,
+                                    ),
+                                    Text(
+                                      imaged.name,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    SizedBox(
+                                      height: 20,
+                                    ),
+                                    Text(
+                                      imaged.description,
+                                    ),
+                                    SizedBox(
+                                      height: 20,
+                                    ),
+                                    Text("Price : ${imaged.price}")
+                                  ],
                                 ),
-                                child: Image.asset('asset/images/catt.png'),
                               ),
-                            ],
-                          )),
-                          Expanded(child: Text("Roben")),
-                        ],
-                      );
+                            ),
+                          ],
+                        )),
+                      ],
+                    ),
+                  ),
+                );
               }).toList()),
             )
           ],

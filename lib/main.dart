@@ -13,13 +13,15 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        resizeToAvoidBottomInset: false,
-        body: Stack(
-          children: <Widget>[
-            DrawerScreen(),
-            HomeScreen(),
-          ],
+      home: SafeArea(
+        child: Scaffold(
+          resizeToAvoidBottomInset: false,
+          body: Stack(
+            children: <Widget>[
+              DrawerScreen(),
+              HomeScreen(),
+            ],
+          ),
         ),
       ),
     );
